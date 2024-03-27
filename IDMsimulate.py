@@ -30,7 +30,7 @@ class IDM():
                      
                      )-> list:
         
-        min_s=0.5*(leader_length+follower_length)       # 恰好不相撞距离
+        min_s=leader_length       # 恰好不相撞距离
 
         # 位置检查
         if(follower_initial_position-leader_position[0]<min_s):      # x越小越在前
