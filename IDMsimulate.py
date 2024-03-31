@@ -8,10 +8,10 @@ class IDM():
     def __init__(self,
                  max_acceleration:float,    # 最大加速度(m/s^2)
                  desired_velocity:float,    # 期望速度 (m/s)
-                 delta:float,               # 加速度指数
                  s0:float,                  # 静止期望跟车距离(m)
                  T:float,                   # 车头时距(s)
                  b:float,                   # 舒适减速度(m/s^2)
+                 delta:float=4.0,               # 加速度指数
                  ) -> None:
         self.max_acceleration=max_acceleration
         self.desired_velocity=desired_velocity
