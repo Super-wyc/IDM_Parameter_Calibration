@@ -22,8 +22,8 @@ class IDM():
     def IDM_simulate(self,
                      time_step:float,            # 时间间隔
                      leader_length:float,        # 引导车车长
-                     leader_velocity:list,       # 引导车速度列表 
-                     leader_position:list,       # 引导车位置列表
+                     leader_velocity:pd.Series,       # 引导车速度列表 
+                     leader_position:pd.Series,       # 引导车位置列表
                      follower_length:float,      # 跟驰车车长
                      follower_initial_velocity:float,    # 跟驰车初始速度
                      follower_initial_position:float     # 跟驰车初始位置
@@ -32,21 +32,6 @@ class IDM():
         
         min_s=leader_length       # 恰好不相撞距离
 
-        # 位置检查
-        if(follower_initial_position-leader_position[0]<min_s):      # x越小越在前
-            print("跟驰车位于引导车前")
-            return
-        else:
-            print("初始位置检查通过")
-        
-        # 长度检查
-        if(len(leader_velocity)!=len(leader_position)):
-            print("位置和速度列表长度不同")
-            return
-        else:
-            print("列表长度检查通过")
-        
-        
         # 初始化跟驰车
         follower_position=np.zeros(leader_position)
         follower_velocity=np.zeros(leader_velocity)
