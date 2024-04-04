@@ -43,10 +43,10 @@ class IDM():
 
         # 模拟
         for i in range(1,len(leader_position)):
-            delta_v = leader_velocity[i-1]-follower_velocity[i-1]
-            s_star = IDM.s0 + max(0, follower_velocity[i-1]*IDM.T + (follower_velocity[i-1]*delta_v)/(2*np.sqrt(IDM.max_acceleration*IDM.b)))
+            delta_v = follower_velocity[i-1]-leader_velocity[i-1]
+            s_star = self.s0 + max(0, follower_velocity[i-1]*self.T + (follower_velocity[i-1]*delta_v)/(2*np.sqrt(self.max_acceleration*self.b)))
             s = leader_position[i-1] - follower_position[i-1] - min_s
-            acceleration = IDM.max_acceleration * (1 - (follower_velocity[i-1]/IDM.desired_velocity)**IDM.delta - (s_star/s)**2)
+            acceleration = self.max_acceleration * (1 - (follower_velocity[i-1]/self.desired_velocity)**self.delta - (s_star/s)**2)
             follower_velocity[i] = follower_velocity[i-1] + acceleration * time_step
             follower_position[i] = follower_position[i-1] + follower_velocity[i-1] * time_step + 0.5 * acceleration * time_step**2
 

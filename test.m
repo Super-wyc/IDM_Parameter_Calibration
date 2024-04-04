@@ -1,7 +1,5 @@
-% 目标函数计算
-function obj_f = obj_f(IDMmodel)% IDM模型中待标定的五个参数：s0、t、a、b、v的初始值设定（无固定要求，这里为一组他人标定结果），单位：m，s，m/s2，m/s2，m/s
-
-    IDM_delta=4.0;
+ IDM_delta=4.0;
+ IDMmodel=[1.899567935598683 0.5006225052694429 2.034889406658853 0.10370989621875638 33.62456626848502]; % IDM模型中待标定的五个参数：s0、t、a、b、v的初始值设定（无固定要求，这里为一组他人标定结果），单位：m，s，m/s2，m/s2，m/s
 
     % 定义包含CSV文件的文件夹路径
     folderPath = 'dataset';
@@ -64,7 +62,7 @@ function obj_f = obj_f(IDMmodel)% IDM模型中待标定的五个参数：s0、t�
     RMSPE_MEAN=RMSPE_total/length(csvFiles);
     obj_f=RMSPE_MEAN;
     disp(num2str(RMSPE_total))
-end
+
     
     % RMSPE计算函数
     function RMSPE = calculate_RMSPE(x, y)
@@ -79,8 +77,3 @@ end
         % 计算百分比均方根误差
         RMSPE = sqrt(mse) * 100;
     end
-   
-
- 
-    
-
