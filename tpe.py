@@ -61,11 +61,11 @@ class IDM():
 
 class TPE():
     def __init__(self, path:str='dataset',
-                 space={'max_acceleration': hp.uniform('max_acceleration', 2, 4),
-                        'desired_velocity': hp.uniform('desired_velocity', 20, 100),
-                        's0': hp.uniform('s0', 1, 5),'T': hp.uniform('T', 0.5, 1.5),
+                 space={'max_acceleration': hp.uniform('max_acceleration', 1.5, 3.5),
+                        'desired_velocity': hp.uniform('desired_velocity', 20, 60),
+                        's0': hp.uniform('s0', 0.5, 5),
                         'T': hp.uniform('T', 0.5, 1.5),
-                        'b': hp.uniform('b', 0.1, 4)}) -> None:
+                        'b': hp.uniform('b', 0.01, 2)}) -> None:
         self.path = path
         self.space = space
 
@@ -85,11 +85,11 @@ class TPE():
     def RMSPE(self, data, args):
         idm = IDM(args['max_acceleration'], args['desired_velocity'], args['s0'], args['T'], args['b'])
         y_pred = idm.simulate(0.04, 12.03, data['front_speed'], data['front_x'], 5.15, data['following_speed'][0], data['following_x'][0])
-        y_true = np.array(data['distance'])  
-        y_pred = np.array(y_pred)  
+        y_true = np.array(data['distance'])
+        y_pred = np.array(y_pred)
         y_true = np.clip(y_true, a_min=1e-8, a_max=None)  # 避免除以零  
-        percent_error = (y_true - y_pred) / y_true  
-        mspe = np.mean(np.square(percent_error))  
+        percent_error = (y_true - y_pred) / y_true
+        mspe = np.mean(np.square(percent_error))
         return np.sqrt(mspe)
 
 
@@ -109,4 +109,5 @@ def tpe_(loop=1000):
                 max_evals=loop)
     return best
 
+print(mean_rmspe({'max_acceleration':1.17198834402471, 'desired_velocity':85.8043588370406, 's0':0.00114452154296868, 'T':0.00377094155433022, 'b':0.0248680417723723}))
 print(tpe_())
