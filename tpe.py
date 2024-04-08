@@ -56,16 +56,16 @@ class IDM():
                 follower_velocity[i+1] = follower_velocity[i] + a * time_step
                 follower_position[i+1] = follower_position[i] + follower_velocity[i] * time_step + 0.5 * a * (time_step**2)
 
-        return leader_position - follower_position
-    
+        return abs(leader_position - follower_position)
+ 
 
 class TPE():
     def __init__(self, path:str='dataset',
-                 space={'max_acceleration': hp.uniform('max_acceleration', 1.5, 3.5),
-                        'desired_velocity': hp.uniform('desired_velocity', 20, 60),
-                        's0': hp.uniform('s0', 0.5, 5),
-                        'T': hp.uniform('T', 0.5, 1.5),
-                        'b': hp.uniform('b', 0.01, 2)}) -> None:
+                 space={'max_acceleration': hp.uniform('max_acceleration', 0.5, 3),
+                        'desired_velocity': hp.uniform('desired_velocity', 22.22, 33.33),
+                        's0': hp.uniform('s0', 0.2, 2),
+                        'T': hp.uniform('T', 0.8, 2),
+                        'b': hp.uniform('b', 0.5, 4)}) -> None:
         self.path = path
         self.space = space
 
@@ -84,7 +84,7 @@ class TPE():
 
     def RMSPE(self, data, args):
         idm = IDM(args['max_acceleration'], args['desired_velocity'], args['s0'], args['T'], args['b'])
-        y_pred = idm.simulate(0.04, 12.03, data['front_speed'], data['front_x'], 5.15, data['following_speed'][0], data['following_x'][0])
+        y_pred = idm.simulate(0.04, data['front_width'][0], data['front_speed'], data['front_x'], data['following_width'][0], data['following_speed'][0], data['following_x'][0])
         y_true = np.array(data['distance'])
         y_pred = np.array(y_pred)
         y_true = np.clip(y_true, a_min=1e-8, a_max=None)  # 避免除以零  
@@ -109,5 +109,5 @@ def tpe_(loop=1000):
                 max_evals=loop)
     return best
 
-print(mean_rmspe({'max_acceleration':1.17198834402471, 'desired_velocity':85.8043588370406, 's0':0.00114452154296868, 'T':0.00377094155433022, 'b':0.0248680417723723}))
+print(mean_rmspe({'max_acceleration':0.972478, 'desired_velocity':33.231694, 's0':0.211538, 'T':0.805561, 'b':0.554205}))
 print(tpe_())
