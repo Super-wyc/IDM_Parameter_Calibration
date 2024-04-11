@@ -55,7 +55,7 @@ class Data_process():
             d['front_a'] = abs(d['front_speed'].diff() / 0.04)
             d['following_speed'] = abs(d['following_x'].diff() * 25)
             d['following_a'] = abs(d['following_speed'].diff() / 0.04)
-            d['frame'] = same_frame['frame']
+            d['frame'] = same_frame['frame'].reset_index(drop=True)
             d['front_id'] = [car_pair[0]] * len(d)
             d['following_id'] = [car_pair[1]] * len(d)
             d = d.bfill()
