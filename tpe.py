@@ -91,6 +91,16 @@ class TPE():
         percent_error = (y_true - y_pred) / y_true
         mspe = np.mean(np.square(percent_error))
         return np.sqrt(mspe)
+    
+    def RMSPE_(self, data, max_acceleration, desired_velocity, s0, T, b):
+        idm = IDM(max_acceleration, desired_velocity, s0, T, b)
+        y_pred = idm.simulate(0.04, data['front_width'][0], data['front_speed'], data['front_x'], data['following_width'][0], data['following_speed'][0], data['following_x'][0])
+        y_true = np.array(data['distance'])
+        y_pred = np.array(y_pred)
+        y_true = np.clip(y_true, a_min=1e-8, a_max=None)  # 避免除以零  
+        percent_error = (y_true - y_pred) / y_true
+        mspe = np.mean(np.square(percent_error))
+        return np.sqrt(mspe)
 
 
 t = TPE()
@@ -110,4 +120,33 @@ def tpe_(loop=1000):
     return best
 
 print(mean_rmspe({'max_acceleration':0.972478, 'desired_velocity':33.231694, 's0':0.211538, 'T':0.805561, 'b':0.554205}))
-print(tpe_())
+# print(tpe_())
+
+from bayes_opt import BayesianOptimization
+
+bounds={'max_acceleration': (0.5, 3),
+        'desired_velocity': (25, 35),
+        's0': (0.2, 2),
+        'T': (0.8, 2),
+        'b': (0.5, 4)}
+
+def neg_mean_rmspe(max_acceleration, desired_velocity, s0, T, b):
+    temp_dict = t.extract_data()
+    rmspe = np.array([])
+    for key in temp_dict.keys():
+        rmspe = np.append(rmspe, t.RMSPE_(temp_dict[key], max_acceleration, desired_velocity, s0, T, b ))
+    return -rmspe.mean()
+
+
+optimizer = BayesianOptimization(
+    f=neg_mean_rmspe,
+    pbounds=bounds,
+    random_state=1,
+)
+
+optimizer.maximize(
+    init_points=50,
+    n_iter=100,
+)
+
+print(optimizer.max)
