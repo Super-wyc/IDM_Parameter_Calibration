@@ -57,7 +57,6 @@ class IDM():
                 follower_position[i+1] = follower_position[i] + follower_velocity[i] * time_step + 0.5 * a * (time_step**2)
 
         return abs(leader_position - follower_position)
- 
 
 class TPE():
     def __init__(self, path:str='dataset',
@@ -144,9 +143,9 @@ optimizer = BayesianOptimization(
     random_state=1,
 )
 
-optimizer.maximize(
-    init_points=50,
-    n_iter=100,
-)
+# optimizer.maximize(
+#     init_points=50,
+#     n_iter=100,
+# )
 
-print(optimizer.max)
+# print(optimizer.max)
