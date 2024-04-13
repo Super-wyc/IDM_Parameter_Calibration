@@ -19,6 +19,7 @@
         data = readtable(filePath);       
         % 后车观测值
         follwer_x_obs=data.following_x(2:end);
+        follwer_v_obs=data.following_speed(2:end);
         
     
         % IDM_simulate
@@ -28,16 +29,19 @@
         front_x=data.front_x(2:end);   %前车位置列表
         front_v=data.front_speed(2:end);   %前车速度列表
         front_length=data.front_width;  %前车长度
+        
     
         min_s=front_length(1); %恰好不相撞距离
-    
-        follwer_x_sim = zeros(length(data.following_x)-1,1); %后车位置预测
-        follwer_v_sim = zeros(length(data.following_speed)-1,1); %后车速度预测
+        
+
+
+        follwer_x_sim0 = zeros(length(data.following_x)-1,1); %后车位置预测
+        follwer_v_sim0 = zeros(length(data.following_speed)-1,1); %后车速度预测
     
         follwer_x_init = data.following_x(2); % 获取实际轨迹中第二个时刻的后车位置
         follwer_v_init=data.following_speed(2); % 获取实际轨迹中第二个时刻的后车速度
-        follwer_x_sim(1)=follwer_x_init;    %后车位置初始化
-        follwer_v_sim(1)=follwer_v_init;    %后车速度初始化
+        follwer_x_sim0(1)=follwer_x_init;    %后车位置初始化
+        follwer_v_sim0(1)=follwer_v_init;    %后车速度初始化
     
         s0=IDMmodel(1);
         t=IDMmodel(2);
@@ -46,17 +50,17 @@
         v=IDMmodel(5);
     
     
-        for i = 2:length(follwer_x_sim)
-            delta_v=follwer_v_sim(i-1)-front_v(i-1);
-            s_star=s0+max(0,follwer_v_sim(i-1)*t+(follwer_v_sim(i-1)*delta_v)/(2*sqrt(max_a*b)));
-            s=front_x(i-1)-follwer_x_sim(i-1)- min_s;
-            a=max_a*(1-(follwer_v_sim(i-1)/v)^4-(s_star/s)^2);
-            follwer_v_sim(i)=follwer_v_sim(i-1)+a*time_step;
-            follwer_x_sim(i)=follwer_x_sim(i-1)+follwer_v_sim(i-1)*time_step+0.5*a*time_step^2;
+        for i = 2:length(follwer_x_sim0)
+            delta_v=follwer_v_obs(i-1)-front_v(i-1);
+            s_star=s0+max(0,follwer_v_obs(i-1)*t+(follwer_v_obs(i-1)*delta_v)/(2*sqrt(max_a*b)));
+            s=front_x(i-1)-follwer_x_obs(i-1)- min_s;
+            a=max_a*(1-(follwer_v_obs(i-1)/v)^IDM_delta-(s_star/s)^2);
+            follwer_v_sim0(i)=follwer_v_obs(i-1)+a*time_step;
+            follwer_x_sim0(i)=follwer_x_obs(i-1)+follwer_v_obs(i-1)*time_step+0.5*a*time_step^2;
         end
     
         %RMSPE计算  space
-        RMSPE=calculate_RMSPE(front_x-follwer_x_obs,front_x-follwer_x_sim);
+        RMSPE=calculate_RMSPE(front_x-follwer_x_obs-front_length(1),front_x-follwer_x_sim0-front_length(1));
         RMSPE_total=RMSPE_total+RMSPE;
     end
     RMSPE_MEAN=RMSPE_total/length(csvFiles);
