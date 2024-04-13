@@ -4,7 +4,7 @@ function obj_f = obj_f_old(IDMmodel)% IDM模型中待标定的五个参数：s0�
     IDM_delta=4.0;
 
     % 定义包含CSV文件的文件夹路径
-    folderPath = 'dataset';
+    folderPath = 'text';
     % 获取文件夹中所有CSV文件的列表
     csvFiles = dir(fullfile(folderPath, '*.csv'));
     %目标函数
@@ -18,7 +18,10 @@ function obj_f = obj_f_old(IDMmodel)% IDM模型中待标定的五个参数：s0�
         % 构建完整的文件路径
         filePath = fullfile(folderPath, csvFiles(k).name);
         % 使用readtable读取CSV文件
-        data = readtable(filePath);       
+        data = readtable(filePath); 
+        %如果有聚类标签，把下面两行放出来
+        %index=data(:,following_feature)==1;
+        %data=data(index,:);
         % 后车观测值
         follwer_x_obs=data.following_x(2:end);
         
