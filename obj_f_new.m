@@ -28,7 +28,7 @@ function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0�
 
           % 取特定类
         id=data.following_id(1);
-        label=data_clurster(data_clurster.following_id==id,"driving_style_lstm");
+        label=data_clurster(data_clurster.following_id==id,"feature");
         label=table2array(label);
         if(label==0)  
 
