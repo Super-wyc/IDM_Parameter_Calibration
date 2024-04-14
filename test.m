@@ -2,12 +2,17 @@ warning("off");
 IDM_delta=4.0;
  IDMmodel=[1.899567935598683 0.5006225052694429 2.034889406658853 0.10370989621875638 33.62456626848502]; % IDM模型中待标定的五个参数：s0、t、a、b、v的初始值设定（无固定要求，这里为一组他人标定结果），单位：m，s，m/s2，m/s2，m/s
 
+    
     % 定义包含CSV文件的文件夹路径
-    folderPath = 'dataset/test';
+    folderPath = 'dataset/train';
     % 获取文件夹中所有CSV文件的列表
     csvFiles = dir(fullfile(folderPath, '*.csv'));
     %目标函数
     RMSPE_total=0;
+
+     % 索引待查
+    data_clurster=readtable('dataset\aftercluster\datawithcluster_lstm.csv');
+    num=0;
     
     % 循环遍历所有CSV文件
     for k = 1:length(csvFiles)
@@ -17,10 +22,17 @@ IDM_delta=4.0;
         % 构建完整的文件路径
         filePath = fullfile(folderPath, csvFiles(k).name);
         % 使用readtable读取CSV文件
-        data = readtable(filePath);
-        %如果有聚类标签，把下面两行放出来
-        %index=data(:,following_feature)==1;
-        %data=data(index,:);
+        data = readtable(filePath); 
+
+
+          % 取特定类
+        id=data.following_id(1);
+        index=data_clurster(:,"following_id")==id;
+        label=data_clurster(index,"following_feature");
+        if(label~=0) 
+            continue;
+        end
+
         % 后车观测值
         follwer_x_obs=data.following_x(2:end);
         follwer_v_obs=data.following_speed(2:end);
@@ -36,6 +48,10 @@ IDM_delta=4.0;
         
     
         min_s=front_length(1); %恰好不相撞距离
+        
+
+
+    
     
         s0=IDMmodel(1);
         t=IDMmodel(2);
@@ -57,7 +73,7 @@ IDM_delta=4.0;
     end
     RMSPE_MEAN=RMSPE_total/length(csvFiles);
     obj_f=RMSPE_MEAN;
-    disp(num2str(RMSPE_MEAN))
+    disp(num2str(RMSPE_total))
 
     
     % RMSPE计算函数

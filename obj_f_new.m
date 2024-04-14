@@ -10,6 +10,10 @@ function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0�
     csvFiles = dir(fullfile(folderPath, '*.csv'));
     %目标函数
     RMSPE_total=0;
+
+     % 索引待查
+    data_clurster=readtable('dataset\aftercluster\datawithcluster_lstm.csv');
+    num=0;
     
     % 循环遍历所有CSV文件
     for k = 1:length(csvFiles)
@@ -20,9 +24,16 @@ function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0�
         filePath = fullfile(folderPath, csvFiles(k).name);
         % 使用readtable读取CSV文件
         data = readtable(filePath); 
-        %如果有聚类标签，把下面两行放出来
-        %index=data(:,following_feature)==1;
-        %data=data(index,:);
+
+
+          % 取特定类
+        following_id=data.following_id(1);
+        index=data_clurster(:,following_id)==0;
+        label=data(index,following_id);
+        if(label~=0) 
+            continue;
+        end
+
         % 后车观测值
         follwer_x_obs=data.following_x(2:end);
         follwer_v_obs=data.following_speed(2:end);
