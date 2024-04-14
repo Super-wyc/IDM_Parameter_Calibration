@@ -115,7 +115,7 @@ space={'max_acceleration': hp.uniform('max_acceleration', 0.1, 5),
        'T': hp.uniform('T', 0.1, 5),
        'b': hp.uniform('b', 0.1, 5)}
 
-def tpe_2(loop=1000):
+def tpe_2(loop=400):
     best = fmin(fn=mean_rmspe2,
                 space=space,  
                 algo=tpe.suggest,  
