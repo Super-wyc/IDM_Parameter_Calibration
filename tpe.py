@@ -121,27 +121,27 @@ def tpe_(loop=1000):
 print(mean_rmspe({'max_acceleration':0.972478, 'desired_velocity':33.231694, 's0':0.211538, 'T':0.805561, 'b':0.554205}))
 # print(tpe_())
 
-from bayes_opt import BayesianOptimization
+# from bayes_opt import BayesianOptimization
 
-bounds={'max_acceleration': (0.5, 3),
-        'desired_velocity': (25, 35),
-        's0': (0.2, 2),
-        'T': (0.8, 2),
-        'b': (0.5, 4)}
+# bounds={'max_acceleration': (0.5, 3),
+#         'desired_velocity': (25, 35),
+#         's0': (0.2, 2),
+#         'T': (0.8, 2),
+#         'b': (0.5, 4)}
 
-def neg_mean_rmspe(max_acceleration, desired_velocity, s0, T, b):
-    temp_dict = t.extract_data()
-    rmspe = np.array([])
-    for key in temp_dict.keys():
-        rmspe = np.append(rmspe, t.RMSPE_(temp_dict[key], max_acceleration, desired_velocity, s0, T, b ))
-    return -rmspe.mean()
+# def neg_mean_rmspe(max_acceleration, desired_velocity, s0, T, b):
+#     temp_dict = t.extract_data()
+#     rmspe = np.array([])
+#     for key in temp_dict.keys():
+#         rmspe = np.append(rmspe, t.RMSPE_(temp_dict[key], max_acceleration, desired_velocity, s0, T, b ))
+#     return -rmspe.mean()
 
 
-optimizer = BayesianOptimization(
-    f=neg_mean_rmspe,
-    pbounds=bounds,
-    random_state=1,
-)
+# optimizer = BayesianOptimization(
+#     f=neg_mean_rmspe,
+#     pbounds=bounds,
+#     random_state=1,
+# )
 
 # optimizer.maximize(
 #     init_points=50,
