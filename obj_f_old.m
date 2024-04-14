@@ -4,11 +4,15 @@ function obj_f = obj_f_old(IDMmodel)% IDM模型中待标定的五个参数：s0�
     IDM_delta=4.0;
 
     % 定义包含CSV文件的文件夹路径
-    folderPath = 'dataset';
+    folderPath = 'text';
     % 获取文件夹中所有CSV文件的列表
     csvFiles = dir(fullfile(folderPath, '*.csv'));
     %目标函数
     RMSPE_total=0;
+
+    % 索引待查
+    data_clurster=readtable('dataset\aftercluster\datawithcluster_lstm.csv');
+    num=0;
     
     % 循环遍历所有CSV文件
     for k = 1:length(csvFiles)
@@ -18,7 +22,15 @@ function obj_f = obj_f_old(IDMmodel)% IDM模型中待标定的五个参数：s0�
         % 构建完整的文件路径
         filePath = fullfile(folderPath, csvFiles(k).name);
         % 使用readtable读取CSV文件
-        data = readtable(filePath);       
+        data = readtable(filePath); 
+        % 取特定类
+        following_id=data.following_id(0);
+        index=data_clurster(:,following_id)==0;
+        label=data(index,following_id);
+        if(label~=0) 
+            continue;
+        end
+        
         % 后车观测值
         follwer_x_obs=data.following_x(2:end);
         
@@ -59,12 +71,14 @@ function obj_f = obj_f_old(IDMmodel)% IDM模型中待标定的五个参数：s0�
             follwer_v_sim(i)=follwer_v_sim(i-1)+a*time_step;
             follwer_x_sim(i)=follwer_x_sim(i-1)+follwer_v_sim(i-1)*time_step+0.5*a*time_step^2;
         end
-    
+
+        num=num+1;
+
         %RMSPE计算  space
         RMSPE=calculate_RMSPE(front_x-follwer_x_obs,front_x-follwer_x_sim);
         RMSPE_total=RMSPE_total+RMSPE;
     end
-    RMSPE_MEAN=RMSPE_total/length(csvFiles);
+    RMSPE_MEAN=RMSPE_total/num;
     obj_f=RMSPE_MEAN;
     disp(num2str(RMSPE_total))
 end

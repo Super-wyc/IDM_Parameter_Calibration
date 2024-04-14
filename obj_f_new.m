@@ -1,14 +1,19 @@
 % 目标函数计算
 function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0、t、a、b、v的初始值设定（无固定要求，这里为一组他人标定结果），单位：m，s，m/s2，m/s2，m/s
 
+
     IDM_delta=4.0;
 
     % 定义包含CSV文件的文件夹路径
-    folderPath = 'dataset';
+    folderPath = 'dataset/train';
     % 获取文件夹中所有CSV文件的列表
     csvFiles = dir(fullfile(folderPath, '*.csv'));
     %目标函数
     RMSPE_total=0;
+
+     % 索引待查
+    data_clurster=readtable('dataset\aftercluster\datawithcluster_lstm.csv');
+    num=0;
     
     % 循环遍历所有CSV文件
     for k = 1:length(csvFiles)
@@ -18,7 +23,17 @@ function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0�
         % 构建完整的文件路径
         filePath = fullfile(folderPath, csvFiles(k).name);
         % 使用readtable读取CSV文件
-        data = readtable(filePath);       
+        data = readtable(filePath); 
+
+
+          % 取特定类
+        following_id=data.following_id(1);
+        index=data_clurster(:,following_id)==0;
+        label=data(index,following_id);
+        if(label~=0) 
+            continue;
+        end
+
         % 后车观测值
         follwer_x_obs=data.following_x(2:end);
         follwer_v_obs=data.following_speed(2:end);
@@ -37,13 +52,7 @@ function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0�
         
 
 
-        follwer_x_sim = zeros(length(data.following_x)-1,1); %后车位置预测
-        follwer_v_sim = zeros(length(data.following_speed)-1,1); %后车速度预测
     
-        follwer_x_init = data.following_x(2); % 获取实际轨迹中第二个时刻的后车位置
-        follwer_v_init=data.following_speed(2); % 获取实际轨迹中第二个时刻的后车速度
-        follwer_x_sim(1)=follwer_x_init;    %后车位置初始化
-        follwer_v_sim(1)=follwer_v_init;    %后车速度初始化
     
         s0=IDMmodel(1);
         t=IDMmodel(2);

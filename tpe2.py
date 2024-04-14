@@ -100,7 +100,7 @@ class TPE():
         mspe = np.mean(np.square(percent_error))
         return np.sqrt(mspe)
     
-t = TPE()
+t = TPE(path="dataset/train")
 
 def mean_rmspe2(args):
     temp_dict = t.extract_data()
@@ -109,10 +109,15 @@ def mean_rmspe2(args):
         rmspe = np.append(rmspe, t.RMSPE2(temp_dict[key], args=args))
     return rmspe.mean()
 
+space={'max_acceleration': hp.uniform('max_acceleration', 0.1, 5),
+       'desired_velocity': hp.uniform('desired_velocity', 10, 50),
+       's0': hp.uniform('s0', 0.1, 10),
+       'T': hp.uniform('T', 0.1, 5),
+       'b': hp.uniform('b', 0.1, 5)}
 
 def tpe_2(loop=1000):
     best = fmin(fn=mean_rmspe2,
-                space=t.space,  
+                space=space,  
                 algo=tpe.suggest,  
                 max_evals=loop)
     return best
