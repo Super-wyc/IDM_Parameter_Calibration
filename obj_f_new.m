@@ -4,7 +4,7 @@ function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0�
 
     IDM_delta=4.0;
 
-    % 定义包含CSV文件的文件夹路径
+   % 定义包含CSV文件的文件夹路径
     folderPath = 'dataset/train';
     % 获取文件夹中所有CSV文件的列表
     csvFiles = dir(fullfile(folderPath, '*.csv'));
@@ -27,54 +27,58 @@ function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0�
 
 
           % 取特定类
-        following_id=data.following_id(1);
-        index=data_clurster(:,following_id)==0;
-        label=data(index,following_id);
-        if(label~=0) 
-            continue;
+        id=data.following_id(1);
+        label=data_clurster(data_clurster.following_id==id,"driving_style_lstm");
+        label=table2array(label);
+        if(label==1) 
+           
+        
+
+            % 后车观测值
+            follwer_x_obs=data.following_x(2:end);
+            follwer_v_obs=data.following_speed(2:end);
+            
+        
+            % IDM_simulate
+            time_step=0.04;    %步长
+            
+        
+            front_x=data.front_x(2:end);   %前车位置列表
+            front_v=data.front_speed(2:end);   %前车速度列表
+            front_length=data.front_width;  %前车长度
+            
+        
+            min_s=front_length(1); %恰好不相撞距离
+            
+    
+    
+        
+        
+            s0=IDMmodel(1);
+            t=IDMmodel(2);
+            max_a=IDMmodel(3);
+            b=IDMmodel(4);
+            v=IDMmodel(5);
+    
+            delta_v=follwer_v_obs-front_v;
+            s_star=s0+max(0,follwer_v_obs.*t+(follwer_v_obs.*delta_v)./(2*sqrt(max_a.*b)));
+            s=front_x-follwer_x_obs- min_s;
+            a=max_a*(1-(follwer_v_obs./v).^IDM_delta-(s_star./s).^2);
+            follwer_v_sim=follwer_v_obs+a.*time_step;
+            follwer_x_sim=follwer_x_obs+follwer_v_obs.*time_step+0.5*a.*time_step^2;
+        
+            num=num+1;
+            %RMSPE计算  space
+            RMSPE=calculate_RMSPE(front_x(2:end)-follwer_x_obs(2:end)-front_length(1),front_x(2:end)-follwer_x_sim(1:end-1)-front_length(1));
+            RMSPE_total=RMSPE_total+RMSPE;
         end
-
-        % 后车观测值
-        follwer_x_obs=data.following_x(2:end);
-        follwer_v_obs=data.following_speed(2:end);
-        
-    
-        % IDM_simulate
-        time_step=0.04;    %步长
-        
-    
-        front_x=data.front_x(2:end);   %前车位置列表
-        front_v=data.front_speed(2:end);   %前车速度列表
-        front_length=data.front_width;  %前车长度
-        
-    
-        min_s=front_length(1); %恰好不相撞距离
-        
-
-
-    
-    
-        s0=IDMmodel(1);
-        t=IDMmodel(2);
-        max_a=IDMmodel(3);
-        b=IDMmodel(4);
-        v=IDMmodel(5);
-
-        delta_v=follwer_v_obs-front_v;
-        s_star=s0+max(0,follwer_v_obs.*t+(follwer_v_obs.*delta_v)./(2*sqrt(max_a.*b)));
-        s=front_x-follwer_x_obs- min_s;
-        a=max_a*(1-(follwer_v_obs./v).^IDM_delta-(s_star./s).^2);
-        follwer_v_sim=follwer_v_obs+a.*time_step;
-        follwer_x_sim=follwer_x_obs+follwer_v_obs.*time_step+0.5*a.*time_step^2;
-    
-    
-        %RMSPE计算  space
-        RMSPE=calculate_RMSPE(front_x(2:end)-follwer_x_obs(2:end)-front_length(1),front_x(2:end)-follwer_x_sim(1:end-1)-front_length(1));
-        RMSPE_total=RMSPE_total+RMSPE;
     end
-    RMSPE_MEAN=RMSPE_total/length(csvFiles);
+
+    RMSPE_MEAN=RMSPE_total/num;
     obj_f=RMSPE_MEAN;
-    disp(num2str(RMSPE_total))
+    disp(num2str(RMSPE_MEAN))
+    disp(num)
+
 end
     
     % RMSPE计算函数
@@ -90,8 +94,6 @@ end
         % 计算百分比均方根误差
         RMSPE = sqrt(mse) * 100;
     end
-   
-
  
     
 
