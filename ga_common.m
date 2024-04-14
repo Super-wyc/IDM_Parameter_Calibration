@@ -1,4 +1,5 @@
 clc;clear;
+warning("off");
 tic
 % 定义需要优化的目标函数
 obj_f_new = @(IDMModel)fun1(IDMModel);

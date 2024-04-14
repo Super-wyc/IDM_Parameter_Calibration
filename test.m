@@ -1,4 +1,5 @@
- IDM_delta=4.0;
+warning("off");
+IDM_delta=4.0;
  IDMmodel=[1.899567935598683 0.5006225052694429 2.034889406658853 0.10370989621875638 33.62456626848502]; % IDM模型中待标定的五个参数：s0、t、a、b、v的初始值设定（无固定要求，这里为一组他人标定结果），单位：m，s，m/s2，m/s2，m/s
 
     % 定义包含CSV文件的文件夹路径
@@ -16,7 +17,7 @@
         % 构建完整的文件路径
         filePath = fullfile(folderPath, csvFiles(k).name);
         % 使用readtable读取CSV文件
-        data = readtable(filePath); 
+        data = readtable(filePath);
         %如果有聚类标签，把下面两行放出来
         %index=data(:,following_feature)==1;
         %data=data(index,:);
