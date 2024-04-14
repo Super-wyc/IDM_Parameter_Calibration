@@ -30,9 +30,7 @@ function obj_f = obj_f_new(IDMmodel)% IDM模型中待标定的五个参数：s0�
         id=data.following_id(1);
         label=data_clurster(data_clurster.following_id==id,"driving_style_lstm");
         label=table2array(label);
-        if(label==1) 
-           
-        
+        if(label==2)  
 
             % 后车观测值
             follwer_x_obs=data.following_x(2:end);

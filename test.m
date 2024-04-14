@@ -31,7 +31,7 @@ IDM_delta=4.0;
         label=data_clurster(data_clurster.following_id==id,"driving_style_lstm");
         label=table2array(label);
         
-        if(label==0)  
+        if(label==2)  
             % 后车观测值
             follwer_x_obs=data.following_x(2:end);
             follwer_v_obs=data.following_speed(2:end);
