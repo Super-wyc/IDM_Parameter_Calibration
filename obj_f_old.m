@@ -11,7 +11,7 @@ function obj_f = obj_f_old(IDMmodel)% IDM模型中待标定的五个参数：s0�
     RMSPE_total=0;
 
      % 索引待查
-    data_clurster=readtable('dataset\aftercluster\datawithcluster_lstm.csv');
+   % data_clurster=readtable('dataset\aftercluster\datawithcluster_lstm.csv');
     num=0;
     
     % 循环遍历所有CSV文件
@@ -26,10 +26,10 @@ function obj_f = obj_f_old(IDMmodel)% IDM模型中待标定的五个参数：s0�
 
 
           % 取特定类
-        id=data.following_id(1);
-        label=data_clurster(data_clurster.following_id==id,"driving_style_lstm");
-        label=table2array(label);
-        if(label==0) 
+      %  id=data.following_id(1);
+       % label=data_clurster(data_clurster.following_id==id,"driving_style_lstm");
+        %label=table2array(label);
+        %if(label==0) 
                     
             % 后车观测值
             follwer_x_obs=data.following_x(2:end);
@@ -77,7 +77,7 @@ function obj_f = obj_f_old(IDMmodel)% IDM模型中待标定的五个参数：s0�
             %RMSPE计算  space
             RMSPE=calculate_RMSPE(front_x-follwer_x_obs,front_x-follwer_x_sim);
             RMSPE_total=RMSPE_total+RMSPE;
-        end
+       % end
     end
 
 
