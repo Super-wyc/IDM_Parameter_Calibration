@@ -6,11 +6,11 @@ obj_f_new = @(IDMModel)fun1(IDMModel);
 numvars = 5;
 
 % IDM模型中待标定的五个参数：s、t、a、b、v的初始值设定（无固定要求，这里为一组他人标定结果），单位：m，s，m/s2，m/s2，m/s
-lb_IDM=[0.2 0.8 0.5 0.5 2.2];  %变量下边界
-ub_IDM=[2.0 2.0 3.0 4.0 33.3];  %变量上边界
+lb_IDM=[0.1 0.1 0.1 0.1 10];  %变量下边界
+ub_IDM=[10.0 5.0 5.0 5.0 50];  %变量上边界
 %IDMModel_init = [3.073 0.8392 0.6814 0.9169 22.22];%初始取值
 
-options = optimoptions("ga",'PopulationSize',100,"MaxGenerations",20,"PlotFcn","gaplotbestf"); 
+options = optimoptions("ga",'PopulationSize',100,"MaxGenerations",15,"PlotFcn","gaplotbestf"); 
 [x, fval] = ga(@obj_f_new,numvars,[],[],[],[],lb_IDM,ub_IDM,[],[],options);
 
 
