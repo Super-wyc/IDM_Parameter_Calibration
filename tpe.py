@@ -102,7 +102,7 @@ class TPE():
         return np.sqrt(mspe)
 
 
-t = TPE(path="dataset/train")
+t = TPE(path="dataset/test")
 
 
 def mean_rmspe(args):
@@ -126,8 +126,8 @@ def tpe_(loop=1000):
                 max_evals=loop)
     return best
 
-print(mean_rmspe({'max_acceleration':0.972478, 'desired_velocity':33.231694, 's0':0.211538, 'T':0.805561, 'b':0.554205}))
-print(tpe_())
+print(mean_rmspe({'T': 0.10109013038005747, 'b': 0.1049543972843065, 'desired_velocity': 49.941819341845694, 'max_acceleration': 0.9063312133143185, 's0': 2.5319228526464688}))
+# print(tpe_())
 
 # from bayes_opt import BayesianOptimization
 

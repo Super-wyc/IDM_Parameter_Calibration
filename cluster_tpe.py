@@ -87,10 +87,10 @@ class TPE():
         new_dict = {}
         for key in data_dict.keys():
             f_id = int(re.search(r"(\d+)\)", key).group()[:-1])
-            if cluster_lstm[cluster_lstm['following_id'] == f_id]['feature'].iloc[0] == feature:
+            if cluster_pca[cluster_pca['following_id'] == f_id]['feature'].iloc[0] == feature:
                 new_dict[key] = data_dict[key]
                 new_dict[key]['lstm_feature'] = list(cluster_lstm[cluster_lstm['following_id'] == f_id]['feature']) * len(data_dict[key])
-                # new_dict[key]['lstm_feature'] = list(cluster_pca[cluster_pca['following_id'] == f_id]['feature']) * len(data_dict[key])
+                new_dict[key]['pca_feature'] = list(cluster_pca[cluster_pca['following_id'] == f_id]['feature']) * len(data_dict[key])
             else:
                 continue
         return new_dict
@@ -123,7 +123,7 @@ def mean_rmspe(args):
     temp_dict = t.extract_data()
     rmspe = np.array([])
     for key in temp_dict.keys():
-        rmspe = np.append(rmspe, t.RMSPE(temp_dict[key][temp_dict[key]['lstm_feature'] == feature], args=args))
+        rmspe = np.append(rmspe, t.RMSPE(temp_dict[key][temp_dict[key]['pca_feature'] == feature], args=args))
     return rmspe.mean()
 
 

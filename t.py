@@ -57,7 +57,7 @@ class IDM2():
         return abs(leader_position[1:] - follower_forecast_position[:-1])
     
 global feature
-feature = 0
+feature = 2
 
 class TPE():
     def __init__(self, path:str='dataset',
@@ -85,7 +85,7 @@ class TPE():
         new_dict = {}
         for key in data_dict.keys():
             f_id = int(re.search(r"(\d+)\)", key).group()[:-1])
-            if cluster_pca[cluster_pca['following_id'] == f_id]['feature'].iloc[0] == feature:
+            if cluster_lstm[cluster_lstm['following_id'] == f_id]['feature'].iloc[0] == feature:
                 new_dict[key] = data_dict[key]
                 new_dict[key]['lstm_feature'] = list(cluster_lstm[cluster_lstm['following_id'] == f_id]['feature']) * len(data_dict[key])
                 new_dict[key]['pca_feature'] = list(cluster_pca[cluster_pca['following_id'] == f_id]['feature']) * len(data_dict[key])
@@ -113,13 +113,13 @@ class TPE():
         mspe = np.mean(np.square(percent_error))
         return np.sqrt(mspe)
     
-t = TPE(path="dataset/verify")
+t = TPE(path="dataset/test")
 
 def mean_rmspe2(args):
     temp_dict = t.extract_data()
     rmspe = np.array([])
     for key in temp_dict.keys():
-        rmspe = np.append(rmspe, t.RMSPE2(temp_dict[key], args=args))
+        rmspe = np.append(rmspe, t.RMSPE2(temp_dict[key][temp_dict[key]['lstm_feature'] == feature], args=args))
     return rmspe.mean()
 
 space={'max_acceleration': hp.uniform('max_acceleration', 0.1, 5),
@@ -135,6 +135,5 @@ def tpe_2(loop=400):
                 max_evals=loop)
     return best
 
-print(mean_rmspe2({'T': 0.10558619766286848, 'b': 3.6221293731290083, 'desired_velocity': 23.821750268852096, 'max_acceleration': 1.4743871770769599, 's0': 3.0039264682913256}))
-
+print(mean_rmspe2({'T': 0.48508047093731954, 'b': 3.0711365248034737, 'desired_velocity': 31.10446602676065, 'max_acceleration': 0.5390212821016392, 's0': 0.2643456893899579}))
 # print(tpe_2())
