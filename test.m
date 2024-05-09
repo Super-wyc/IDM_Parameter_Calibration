@@ -1,18 +1,18 @@
 clc;clear;
 warning("off");
 IDM_delta=4.0;
- IDMmodel=[1.899567935598683 0.5006225052694429 2.034889406658853 0.10370989621875638 33.62456626848502]; % IDM模型中待标定的五个参数：s0、t、a、b、v的初始值设定（无固定要求，这里为一组他人标定结果），单位：m，s，m/s2，m/s2，m/s
+ IDMmodel=[1.446642,0.156515,3.820973,1.348941,24.594439]; % IDM模型中待标定的五个参数：s0、t、a、b、v的初始值设定（无固定要求，这里为一组他人标定结果），单位：m，s，m/s2，m/s2，m/s
 
     
     % 定义包含CSV文件的文件夹路径
-    folderPath = 'dataset/train';
+    folderPath = 'dataset/verify';
     % 获取文件夹中所有CSV文件的列表
     csvFiles = dir(fullfile(folderPath, '*.csv'));
     %目标函数
     RMSPE_total=0;
 
      % 索引待查
-    data_clurster=readtable('dataset\aftercluster\datawithcluster_lstm.csv');
+    %data_clurster=readtable('dataset\aftercluster\datawithcluster_lstm.csv');
     num=0;
 
     % 循环遍历所有CSV文件
@@ -27,11 +27,11 @@ IDM_delta=4.0;
 
 
           % 取特定类
-        id=data.following_id(1);
-        label=data_clurster(data_clurster.following_id==id,"driving_style_lstm");
-        label=table2array(label);
+        %id=data.following_id(1);
+        %label=data_clurster(data_clurster.following_id==id,"driving_style_lstm");
+        %label=table2array(label);
         
-        if(label==2)  
+        %if(label==2)  
             % 后车观测值
             follwer_x_obs=data.following_x(2:end);
             follwer_v_obs=data.following_speed(2:end);
@@ -69,7 +69,7 @@ IDM_delta=4.0;
             %RMSPE计算  space
             RMSPE=calculate_RMSPE(front_x(2:end)-follwer_x_obs(2:end)-front_length(1),front_x(2:end)-follwer_x_sim(1:end-1)-front_length(1));
             RMSPE_total=RMSPE_total+RMSPE;
-        end
+        %end
     end
     
     RMSPE_MEAN=RMSPE_total/num;
